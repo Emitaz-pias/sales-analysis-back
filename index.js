@@ -40,8 +40,7 @@ async function run() {
       try {
         const data = req.body;
         const upload = await outletCollection.insertOne(data);
-        console.log(upload, "data", upload.acknowledged);
-        res.json({ message: "Data inserted successfully!" });
+        res.send(upload.acknowledged);
       } catch (err) {
         console.error("Error inserting data:", err);
         res.status(500).json({ error: "An error occurred while inserting data." });
@@ -52,8 +51,8 @@ async function run() {
       try {
         const data = req.body;
         const upload = await productsCollection.insertOne(data);
-        console.log(upload, "data", upload.acknowledged);
-        res.json({ message: "Data inserted successfully!" });
+        console.log(req.body,upload)
+        res.send(upload.acknowledged)
       } catch (err) {
         console.error("Error inserting data:", err);
         res.status(500).json({ error: "An error occurred while inserting data." });
