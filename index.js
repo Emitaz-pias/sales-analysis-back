@@ -14,7 +14,6 @@ const dbPass = process.env.DB_PASS;
 const db = process.env.DB;
 const deliveryCollection = process.env.DELIVERY_COLLECTION;
 const expiryCollection = process.env.EXPIRY_COLLECTION;
-const productsCollection = process.env.PRODUCTS_COLLECTION;
 
 // db connection
 const uri = `mongodb+srv://${dbUser}:${dbPass}@cluster0.7yyq5li.mongodb.net/?retryWrites=true&w=majority`;
@@ -33,12 +32,26 @@ async function run() {
     console.log("Connected to MongoDB successfully!");
     const database = client.db(db);
     const outletCollection = database.collection(process.env.OUTLETS_COLLECTION);
+    const productsCollection = database.collection(process.env.PRODUCTS_COLLECTION)
+
 
     // Post Outlet API function
     app.post("/postOutlet", async (req, res) => {
       try {
         const data = req.body;
         const upload = await outletCollection.insertOne(data);
+        console.log(upload, "data", upload.acknowledged);
+        res.json({ message: "Data inserted successfully!" });
+      } catch (err) {
+        console.error("Error inserting data:", err);
+        res.status(500).json({ error: "An error occurred while inserting data." });
+      }
+    });
+
+    app.post("/postNewProduct", async (req, res) => {
+      try {
+        const data = req.body;
+        const upload = await productsCollection.insertOne(data);
         console.log(upload, "data", upload.acknowledged);
         res.json({ message: "Data inserted successfully!" });
       } catch (err) {
