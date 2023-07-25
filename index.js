@@ -12,7 +12,6 @@ app.use(bodyParser.json());
 const dbUser = process.env.DB_USER;
 const dbPass = process.env.DB_PASS;
 const db = process.env.DB;
-const deliveryCollection = process.env.DELIVERY_COLLECTION;
 
 // db connection
 const uri = `mongodb+srv://${dbUser}:${dbPass}@cluster0.7yyq5li.mongodb.net/?retryWrites=true&w=majority`;
@@ -32,7 +31,9 @@ async function run() {
     const database = client.db(db);
     const outletCollection = database.collection(process.env.OUTLETS_COLLECTION);
     const productsCollection = database.collection(process.env.PRODUCTS_COLLECTION);
-    const expiryCollection =database.collection( process.env.EXPIRY_COLLECTION);
+    const expiryCollection =database.collection(process.env.EXPIRY_COLLECTION);
+    const deliveryCollection =database.collection(process.env.DELIVERY_COLLECTION);
+
 
 
     // Post Outlet API function
@@ -58,9 +59,16 @@ async function run() {
         res.status(500).json({ error: "An error occurred while inserting data." });
       }
     });
-    app.post('/newExpiry',async function (req, res) {
-      const expiry = req.data
-      const upload = await expiryCollection.insertOne(data)
+    app.post('/postNewExpriry',async function (req, res) {
+      const expiry = req.body
+      const upload = await expiryCollection.insertOne(expiry)
+      res.send(upload.acknowledged)
+
+    })
+
+    app.post('/postNewDelivery',async function (req, res) {
+      const delivery = req.body
+      const upload = await deliveryCollection.insertOne(delivery)
       res.send(upload.acknowledged)
 
     })
