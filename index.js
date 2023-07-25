@@ -12,8 +12,7 @@ app.use(bodyParser.json());
 const dbUser = process.env.DB_USER;
 const dbPass = process.env.DB_PASS;
 const db = process.env.DB;
-const deliveryCollection = process.env.DELIVERY_COLLECTION;
-const expiryCollection = process.env.EXPIRY_COLLECTION;
+
 
 // db connection
 const uri = `mongodb+srv://${dbUser}:${dbPass}@cluster0.7yyq5li.mongodb.net/?retryWrites=true&w=majority`;
@@ -33,6 +32,8 @@ async function run() {
     const database = client.db(db);
     const outletCollection = database.collection(process.env.OUTLETS_COLLECTION);
     const productsCollection = database.collection(process.env.PRODUCTS_COLLECTION)
+    const deliveryCollection = database.collection(process.env.DELIVERY_COLLECTION);
+    const expiryCollection = database.collection(process.env.EXPIRY_COLLECTION);
 
 
     // Post Outlet API function
@@ -46,13 +47,35 @@ async function run() {
         res.status(500).json({ error: "An error occurred while inserting data." });
       }
     });
-
+    //poast new product
     app.post("/postNewProduct", async (req, res) => {
       try {
         const data = req.body;
         const upload = await productsCollection.insertOne(data);
         console.log(req.body,upload)
         res.send(upload.acknowledged)
+      } catch (err) {
+        console.error("Error inserting data:", err);
+        res.status(500).json({ error: "An error occurred while inserting data." });
+      }
+    });
+    //post new Expriy
+    app.post("/postNewExpriry", async (req, res) => {
+      try {
+        const data = req.body;
+        const upload = await expiryCollection.insertOne(data);
+        res.send(upload.acknowledged);
+      } catch (err) {
+        console.error("Error inserting data:", err);
+        res.status(500).json({ error: "An error occurred while inserting data." });
+      }
+    });
+    //post new delivery
+    app.post("/postNewDelivery", async (req, res) => {
+      try {
+        const data = req.body;
+        const upload = await deliveryCollection.insertOne(data);
+        res.send(upload.acknowledged);
       } catch (err) {
         console.error("Error inserting data:", err);
         res.status(500).json({ error: "An error occurred while inserting data." });
