@@ -13,7 +13,6 @@ const dbUser = process.env.DB_USER;
 const dbPass = process.env.DB_PASS;
 const db = process.env.DB;
 
-
 // db connection
 const uri = `mongodb+srv://${dbUser}:${dbPass}@cluster0.7yyq5li.mongodb.net/?retryWrites=true&w=majority`;
 
@@ -30,10 +29,14 @@ async function run() {
     await client.connect();
     console.log("Connected to MongoDB successfully!");
     const database = client.db(db);
-    const outletCollection = database.collection(process.env.OUTLETS_COLLECTION);
-    const productsCollection = database.collection(process.env.PRODUCTS_COLLECTION)
-    const deliveryCollection = database.collection(process.env.DELIVERY_COLLECTION);
+    const outletCollection = database.collection(
+      process.env.OUTLETS_COLLECTION
+    );
+    const productsCollection = database.collection(
+      process.env.PRODUCTS_COLLECTION
+    );
     const expiryCollection = database.collection(process.env.EXPIRY_COLLECTION);
+    const deliveryCollection =database.collection( process.env.DELIVERY_COLLECTION);
 
 
     // Post Outlet API function
@@ -44,7 +47,9 @@ async function run() {
         res.send(upload.acknowledged);
       } catch (err) {
         console.error("Error inserting data:", err);
-        res.status(500).json({ error: "An error occurred while inserting data." });
+        res
+          .status(500)
+          .json({ error: "An error occurred while inserting data." });
       }
     });
     //poast new product
@@ -52,11 +57,13 @@ async function run() {
       try {
         const data = req.body;
         const upload = await productsCollection.insertOne(data);
-        console.log(req.body,upload)
-        res.send(upload.acknowledged)
+        console.log(req.body, upload);
+        res.send(upload.acknowledged);
       } catch (err) {
         console.error("Error inserting data:", err);
-        res.status(500).json({ error: "An error occurred while inserting data." });
+        res
+          .status(500)
+          .json({ error: "An error occurred while inserting data." });
       }
     });
     //post new Expriy
@@ -67,7 +74,9 @@ async function run() {
         res.send(upload.acknowledged);
       } catch (err) {
         console.error("Error inserting data:", err);
-        res.status(500).json({ error: "An error occurred while inserting data." });
+        res
+          .status(500)
+          .json({ error: "An error occurred while inserting data." });
       }
     });
     //post new delivery
@@ -78,10 +87,24 @@ async function run() {
         res.send(upload.acknowledged);
       } catch (err) {
         console.error("Error inserting data:", err);
-        res.status(500).json({ error: "An error occurred while inserting data." });
+        res
+          .status(500)
+          .json({ error: "An error occurred while inserting data." });
       }
     });
 
+    //////get APIs/////////////////
+
+    //get all outlets//
+    app.get("/getAllOutlets", async (req, res) => {
+      const getOutlets = await outletCollection.find({}).toArray();
+      res.send(getOutlets);
+    });
+    // get all products///
+    app.get("/getAllProducts", async (req, res) => {
+      const getProducts = await productsCollection.find({}).toArray();
+      res.send(getProducts);
+    });
     const PORT = process.env.PORT || 4040;
     app.listen(PORT, () => {
       console.log("app is alive N connected to db ;) on port =>", PORT);
