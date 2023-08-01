@@ -132,8 +132,9 @@ async function run() {
       }
       const deliveryQuery ={
         outletName: outlet, deliveryDate: {
-          $gte: dateFrom
-        },
+          $gte: dateFrom,
+          $lte: dateTo,
+        }
       }
       const expiryData = await expiryCollection.find(expiryQuery).toArray();
       const deliveryData = await deliveryCollection.find(deliveryQuery).toArray()
