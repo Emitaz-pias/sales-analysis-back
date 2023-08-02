@@ -54,7 +54,6 @@ async function run() {
       try {
         const data = req.body;
         const upload = await productsCollection.insertOne(data);
-        console.log(req.body, upload)
         res.send(upload.acknowledged)
       } catch (err) {
         console.error("Error inserting data:", err);
@@ -139,7 +138,6 @@ async function run() {
       const expiryData = await expiryCollection.find(expiryQuery).toArray();
       const deliveryData = await deliveryCollection.find(deliveryQuery).toArray()
       res.send({expiryData,deliveryData})
-      console.log(deliveryData,expiryData,'is the data')
     })
 
 
